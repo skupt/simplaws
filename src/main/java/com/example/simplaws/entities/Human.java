@@ -13,10 +13,10 @@ import javax.persistence.*;
 public class Human {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    long id;
-    String Name;
-    int age;
+    private long id;
+    private String name;
+    private int age;
     @Enumerated(EnumType.STRING)
     @Column(nullable = true, columnDefinition = "varchar(8) default 'MALE'")
-    Gender gender;
+    private Gender gender;
 }

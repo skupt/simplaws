@@ -5,6 +5,8 @@ import com.example.simplaws.entities.HumanDTO;
 import com.example.simplaws.repositories.HumanRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,10 @@ import java.util.Optional;
 @RestController
 @RequestMapping(value = "api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class SimplawsController {
+
+    @Autowired
+    ApplicationContext context;
+
     @Autowired
     HumanRepository humanRepository;
     @Autowired
@@ -50,4 +56,9 @@ public class SimplawsController {
         return ResponseEntity.status(HttpStatus.OK).body("Deleted");
     }
 
+    @GetMapping("/stop")
+    public void stop() {
+        ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) context;
+        configurableApplicationContext.close();
+    }
 }
