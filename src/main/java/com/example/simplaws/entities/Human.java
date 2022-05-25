@@ -3,20 +3,38 @@ package com.example.simplaws.entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbBean;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 
-import javax.persistence.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
+@DynamoDbBean
 public class Human {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private Long id;
     private String name;
     private int age;
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = true, columnDefinition = "varchar(8) default 'MALE'")
     private Gender gender;
+
+    @DynamoDbPartitionKey
+    public Long getId() {
+        return id;
+    }
+
+    @DynamoDbAttribute("name")
+    public String getName() {
+        return name;
+    }
+
+    @DynamoDbAttribute("age")
+    public int getAge() {
+        return age;
+    }
+
+    @DynamoDbAttribute("gender")
+    public Gender getGender() {
+        return gender;
+    }
 }

@@ -1,8 +1,8 @@
 package com.example.simplaws.controllers;
 
+import com.example.simplaws.dao.HumanDao;
 import com.example.simplaws.entities.Human;
 import com.example.simplaws.entities.HumanDTO;
-import com.example.simplaws.repositories.HumanRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -21,38 +21,41 @@ import java.util.Optional;
 public class SimplawsController {
 
     @Autowired
-    ApplicationContext context;
+    private ApplicationContext context;
+
+//    @Autowired
+//    private HumanRepository humanRepository;
 
     @Autowired
-    HumanRepository humanRepository;
+    private HumanDao humanDao;
+
     @Autowired
-    ModelMapper modelMapper;
+    private ModelMapper modelMapper;
 
     @GetMapping("/humans")
     public ResponseEntity<List<Human>> getHumans() {
-        return ResponseEntity.status(HttpStatus.OK).body(humanRepository.findAll());
+        return ResponseEntity.status(HttpStatus.OK).body(humanDao.findAll());
     }
 
     @GetMapping("/humans/{id}")
-    public ResponseEntity<Human> getHuman(@PathVariable("id") long id)  {
-        Optional<Human> humanOptional = humanRepository.findById(id);
+    public ResponseEntity<?> getHuman(@PathVariable("id") long id) {
+        Optional<Human> humanOptional = humanDao.findById(id);
         if (humanOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(humanOptional.get());
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Human with id=" + id + "not found");
     }
 
     @PostMapping("/humans")
-    public ResponseEntity<Human> createHuman(@RequestBody HumanDTO humanDTO) {
+    public ResponseEntity<Human> saveHuman(@RequestBody HumanDTO humanDTO) {
         Human human = modelMapper.map(humanDTO, Human.class);
-        System.out.println(human);
-        Human humanCreated = humanRepository.save(human);
+        Human humanCreated = humanDao.save(human);
         return ResponseEntity.status(HttpStatus.OK).body(humanCreated);
     }
 
     @DeleteMapping("/humans/{id}")
     public ResponseEntity<String> deleteHuman(@PathVariable("id") long id) {
-        humanRepository.deleteById(id);
+        humanDao.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Deleted");
     }
 
@@ -60,5 +63,6 @@ public class SimplawsController {
     public void stop() {
         ConfigurableApplicationContext configurableApplicationContext = (ConfigurableApplicationContext) context;
         configurableApplicationContext.close();
+        System.exit(0);
     }
 }
